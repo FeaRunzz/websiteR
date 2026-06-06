@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Revalin 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Jost:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --pk:#c96b8a;--pk-light:#f5c6d4;--pk-soft:#fdf0f3;
+  --cream:#faf6f0;--warm:#f0e6d3;
+  --td:#3a2730;--tm:#6b4050;--tl:#a07080;
+  --gold:#c9a96e;
+}
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background:#1a0d14;
+}
+body{
+  font-family:'Jost',sans-serif;
+  color:var(--td);
+}
+
+/* petals - dipindahkan ke background paling belakang */
+.petal{position:fixed;border-radius:50% 0 50% 0;opacity:0;pointer-events:none;z-index:-1;animation:pfall linear infinite;}
+@keyframes pfall{0%{transform:translateY(-20px) rotate(0deg);opacity:0;}10%{opacity:.5;}90%{opacity:.2;}100%{transform:translateY(110vh) rotate(400deg);opacity:0;}}
+
+/* ── SCREENS ── */
+.screen{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .7s ease;
+  z-index:1;
+  overflow:hidden;
+}
+.screen.active{opacity:1;pointer-events:all;}
+
+/* ─── SPLASH ─── */
+#s-splash{
+  background:linear-gradient(160deg,#1a0d14 0%,#2d1520 50%,#1a0d14 100%);
+  gap:24px;
+  text-align:center;
+  padding:24px;
+}
+.splash-sub{
+  font-size:11px;font-weight:200;letter-spacing:.5em;text-transform:uppercase;
+  color:rgba(201,107,138,.6);
+}
+.splash-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(40px,12vw,72px);
+  font-weight:300;font-style:italic;
+  color:#f5c6d4;
+  line-height:1.1;
+}
+.splash-desc{
+  font-size:clamp(14px,2.5vw,16px);font-weight:300;
+  color:rgba(245,198,212,.65);
+  max-width:340px;line-height:1.8;
+}
+.btn-tap{
+  margin-top:16px;
+  padding:16px 48px;
+  background:transparent;
+  border:1px solid rgba(201,107,138,.5);
+  color:#f5c6d4;
+  font-family:'Jost',sans-serif;font-size:12px;font-weight:300;
+  letter-spacing:.35em;text-transform:uppercase;
+  cursor:pointer;border-radius:100px;
+  transition:all .4s ease;
+  position:relative;overflow:hidden;
+}
+.btn-tap::before{
+  content:'';position:absolute;inset:0;
+  background:rgba(201,107,138,.15);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s ease;border-radius:100px;
+}
+.btn-tap:hover{border-color:rgba(201,107,138,.9);}
+.btn-tap:hover::before{transform:scaleX(1);}
+
+/* ─── FLOWER SLIDES ─── */
+.flower-screen{
+  background:#0f0a0d;
+  padding:0;
+  flex-direction:row;
+  align-items:stretch;
+  justify-content:stretch;
+}
+
+.flower-img-side{
+  flex:0 0 45%;
+  position:relative;
+  overflow:hidden;
+}
+.flower-img-side img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  transition:transform 8s ease;
+  transform:scale(1.05);
+}
+.flower-screen.active .flower-img-side img{transform:scale(1);}
+.flower-img-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 60%,#0f0a0d 100%);
+}
+
+.flower-text-side{
+  flex:1;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:40px 50px 40px 40px;
+  position:relative;
+  overflow-y:auto;
+}
+
+.f-progress{
+  display:flex;gap:6px;margin-bottom:30px;
+}
+.f-dot{
+  width:16px;height:2px;
+  background:rgba(201,107,138,.2);
+  border-radius:2px;transition:background .4s ease, width .4s ease;
+}
+.f-dot.done{background:rgba(201,107,138,.5);}
+.f-dot.active{background:var(--pk);width:28px;}
+
+.f-letter{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(70px,12vw,130px);
+  font-weight:300;font-style:italic;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(201,107,138,.25);
+  line-height:.85;
+  position:absolute;right:30px;top:30px;
+  user-select:none;pointer-events:none;
+}
+
+.f-tag{
+  font-size:10px;font-weight:200;letter-spacing:.4em;text-transform:uppercase;
+  color:rgba(201,107,138,.5);
+  margin-bottom:12px;
+}
+.f-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,5vw,50px);
+  font-weight:400;
+  color:#f5c6d4;
+  line-height:1.1;
+  margin-bottom:4px;
+}
+.f-latin{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:clamp(13px,2vw,16px);font-weight:300;
+  color:rgba(201,107,138,.5);
+  margin-bottom:20px;
+}
+.f-desc{
+  font-size:clamp(13px,1.8vw,15px);font-weight:300;line-height:1.8;
+  color:rgba(245,198,212,.65);
+  max-width:400px;
+  margin-bottom:24px;
+}
+.f-quote{
+  border-left:1.5px solid rgba(201,107,138,.3);
+  padding:8px 16px;
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:clamp(14px,1.8vw,17px);font-weight:300;
+  color:rgba(245,198,212,.5);
+  line-height:1.6;
+  margin-bottom:30px;
+}
+
+.f-nav{display:flex;gap:12px;align-items:center;}
+.btn-prev{
+  width:44px;height:44px;border-radius:50%;
+  background:transparent;border:1px solid rgba(201,107,138,.2);
+  color:rgba(201,107,138,.5);font-size:18px;cursor:pointer;
+  transition:all .3s ease;display:flex;align-items:center;justify-content:center;
+}
+.btn-prev:hover{border-color:rgba(201,107,138,.6);color:#f5c6d4;}
+.btn-next-f{
+  padding:14px 36px;
+  background:transparent;
+  border:1px solid rgba(201,107,138,.4);
+  color:#f5c6d4;
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:300;
+  letter-spacing:.3em;text-transform:uppercase;
+  cursor:pointer;border-radius:100px;
+  transition:all .35s ease;position:relative;overflow:hidden;
+}
+.btn-next-f:hover{border-color:rgba(201,107,138,.8);}
+
+/* ── LETTER SCREENS ── */
+#s-letter-1{background:linear-gradient(160deg,#fdf0f3 0%,#faf6f0 100%);}
+#s-letter-2{background:linear-gradient(150deg,#f5ece8 0%,#ede8f5 60%,#f0e8ed 100%);}
+#s-letter-3{background:linear-gradient(160deg,#2d1a20 0%,#3a2030 100%);}
+#s-closing{background:linear-gradient(170deg,#2a1828 0%,#1e1018 100%);}
+
+.letter-inner{
+  max-width:560px;width:100%;
+  padding:40px 24px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;gap:24px;
+  overflow-y:auto;
+  max-height:100%;
+}
+.letter-inner::-webkit-scrollbar{display:none;}
+
+.l-tag{
+  font-size:10px;font-weight:200;letter-spacing:.4em;text-transform:uppercase;
+  color:var(--tl);border:1px solid var(--pk-light);
+  padding:6px 18px;border-radius:100px;
+  flex-shrink: 0;
+}
+.l-tag.dark{color:rgba(201,107,138,.6);border-color:rgba(201,107,138,.25);}
+
+.num-big{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(80px,20vw,140px);
+  font-weight:300;line-height:.8;
+  color:transparent;-webkit-text-stroke:1.5px var(--pk-soft);
+  letter-spacing:-.05em;user-select:none;
+}
+
+.l-heading{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,5vw,38px);font-weight:400;
+  color:var(--td);line-height:1.25;
+}
+.l-heading.dark{color:#f5c6d4;}
+
+.l-body{
+  font-size:clamp(14px,2.2vw,16px);font-weight:300;line-height:1.8;
+  color:var(--tm);text-align:center;max-width:480px;
+}
+.l-body.dark{color:rgba(245,198,212,.65);}
+
+.l-quote-box{
+  border-left:2px solid var(--pk-soft);
+  padding:14px 20px;
+  background:rgba(253,240,243,.5);
+  border-radius:0 12px 12px 0;
+  text-align:left;
+  align-self:stretch;
+}
+.l-quote-box p{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(16px,2.5vw,20px);font-style:italic;font-weight:300;
+  color:var(--td);line-height:1.6;
+}
+
+.pulang{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,6.5vw,52px);font-weight:400;font-style:italic;
+  color:#f5c6d4;line-height:1.2;
+  margin:8px 0;
+}
+
+.closing-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(70px,16vw,120px);font-weight:300;
+  color:transparent;-webkit-text-stroke:1px rgba(201,107,138,.3);
+  letter-spacing:-.05em;line-height:.8;user-select:none;
+}
+
+.btn-letter{
+  padding:14px 40px;
+  background:transparent;cursor:pointer;
+  border-radius:100px;
+  font-family:'Jost',sans-serif;font-size:11px;font-weight:300;
+  letter-spacing:.3em;text-transform:uppercase;
+  transition:all .35s ease;
+  flex-shrink:0;
+}
+.btn-letter.light{border:1px solid var(--pk);color:var(--pk);}
+.btn-letter.light:hover{background:var(--pk);color:#fff;}
+.btn-letter.dark-btn{border:1px solid rgba(201,107,138,.4);color:#f5c6d4;}
+.btn-letter.dark-btn:hover{border-color:rgba(201,107,138,.8);background:rgba(201,107,138,0.1);}
+
+/* ── TOMBOL BACK DI LETTER SCREENS ── */
+.btn-back-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 16px;
+  line-height: 1;
+  transition: all .3s ease;
+  flex-shrink: 0;
+  color: rgba(201,107,138,.45);
+  border: 1px solid rgba(201,107,138,.2);
+}
+.btn-back-letter:hover {
+  border-color: rgba(201,107,138,.5);
+  color: rgba(245,198,212,.9);
+  background: rgba(201,107,138,.08);
+}
+
+/* Row untuk back + next di letter screens */
+.letter-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+/* ── TRANSITION OVERLAY ── */
+#overlay{
+  position:fixed;inset:0;background:#1a0d14;
+  z-index:999;pointer-events:none;
+  opacity:0;transition:opacity .45s ease;
+}
+#overlay.on{opacity:1;pointer-events:all;}
+
+/* ── TOMBOL MUTE ── */
+#btn-mute {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 998;
+  background: rgba(201,107,138,.15);
+  border: 1px solid rgba(201,107,138,.3);
+  color: rgba(245,198,212,.7);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all .3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#btn-mute:hover {
+  background: rgba(201,107,138,.3);
+  border-color: rgba(201,107,138,.6);
+}
+
+/* ── PERBAIKAN KHUSUS MOBILE TAMPILAN HP ── */
+@media(max-width:680px){
+  .flower-screen{flex-direction:column;}
+  .flower-img-side{flex:0 0 38vh;}
+  .flower-img-overlay{background:linear-gradient(180deg,transparent 40%,#0f0a0d 100%);}
+  .flower-text-side{
+    padding:24px 24px 32px 24px;
+    justify-content: flex-start;
+  }
+  .f-progress { margin-bottom: 20px; }
+  .f-letter{font-size:70px;top:15px;right:20px;}
+  .f-latin { margin-bottom: 14px; }
+  .f-desc { margin-bottom: 16px; }
+  .f-quote { margin-bottom: 24px; }
+  
+  .letter-inner {
+    padding: 32px 20px;
+    gap: 18px;
+  }
+  .num-big { font-size: 90px; }
+  .closing-num { font-size: 85px; }
+}
+</style>
+</head>
+<body>
+
+<div id="overlay"></div>
+
+<!-- BACKSOUND -->
+<audio id="bgm" loop preload="auto">
+  <source src="music/music.mp3" type="audio/mpeg">
+</audio>
+
+<!-- TOMBOL MUTE -->
+<button id="btn-mute" title="Mute/Unmute">🔊</button>
+
+<div class="screen active" id="s-splash">
+  <p class="splash-sub">Sebuah pesan untukmu</p>
+  <h1 class="splash-title">Halo,<br>Revalin.</h1>
+  <p class="splash-desc">
+    Aku ingin memperkenalkanmu<br>beberapa bunga yang indah,<br>sebelum kamu membaca sesuatu<br>yang ingin kusampaikan.
+  </p>
+  <button class="btn-tap" onclick="goTo('s-f0')">✦Pencet ini pencet ini✦</button>
+</div>
+
+<div class="screen flower-screen" id="s-f0">
+  <div class="flower-img-side">
+    <img src="img/rose.jpg" alt="Rose">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">R</span>
+    <div class="f-progress" id="prog-0"></div>
+    <p class="f-tag">Bunga pertama</p>
+    <h2 class="f-name">Rose</h2>
+    <p class="f-latin">Rosa canina</p>
+    <p class="f-desc">
+      Rose atau Mawar tu bunga yang mungkin paling banyak dikenal di dunia, namun keindahannya gak pernah kehilangan daya pesonanya. Kelopaknya yang berlapis-lapis, nyimpen kelembutan sekaligus keberanian — ia mekar di antara duri, namun tetap harum sempurna.
+    </p>
+    <div class="f-quote">
+      "Seperti mawar yang tumbuh di celah-celah batu — cantik justru karena bertahan."
+    </div>
+    <div class="f-nav">
+      <button class="btn-next-f" onclick="goTo('s-f1')">Next→</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f1">
+  <div class="flower-img-side">
+    <img src="img/echinacea.jpg" alt="Echinacea">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">E</span>
+    <div class="f-progress" id="prog-1"></div>
+    <p class="f-tag">Bunga kedua</p>
+    <h2 class="f-name">Echinacea</h2>
+    <p class="f-latin">Echinacea purpurea</p>
+    <p class="f-desc">
+      Mungkin namanya terdengar asing ya?, tapi bunga ini justru salah satu yang paling kuat lho rev. Kelopaknya berwarna ungu yang lembut melingkari pusat yang kokoh kaya mahkota. Echinacea tu dikenal sebagai simbol kekuatan — ia mekar bahkan di tanah yang kering sekalipun.
+    </p>
+    <div class="f-quote">
+      "Kekuatan sejati tidak selalu terlihat keras — kadang ia hadir dalam warnanya yang tenang."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f0')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-f2')">Bagus ya? Lanjut Rev! →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f2">
+  <div class="flower-img-side">
+    <img src="img/violet.jpg" alt="Violet">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">V</span>
+    <div class="f-progress" id="prog-2"></div>
+    <p class="f-tag">Bunga ketiga</p>
+    <h2 class="f-name">Violet</h2>
+    <p class="f-latin">Viola odorata</p>
+    <p class="f-desc">
+      Kecil, tapi aromanya mampu mengisi seluruh ruangan. Violet tu bunga yang rendah hati — tumbuh dekat tanah, ga berusaha menjulang tinggi, namun keharumannya selalu diingat sama siapa pun yang pernah melewatinya. Ia ngajarin bahwa keindahan sejati tidak butuh pengakuan.
+    </p>
+    <div class="f-quote">
+      "Tidak perlu tinggi untuk meninggalkan kesan — hadirlah dengan tulus, itu sudah cukup."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f1')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-f3')">Indah kan?Lanjut Rev!→</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f3">
+  <div class="flower-img-side">
+    <img src="img/aster.jpg" alt="Aster">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">A</span>
+    <div class="f-progress" id="prog-3"></div>
+    <p class="f-tag">Bunga keempat</p>
+    <h2 class="f-name">Aster</h2>
+    <p class="f-latin">Aster amellus</p>
+    <p class="f-desc">
+      Namanya berasal dari kata Yunani yang berarti bintang — dan memang, dari atas kelopak-kelopaknya memencar seperti sinar bintang yang jatuh ke bumi. Aster katanya mekar di musim gugur ketika bunga-bunga lain mulai tidur, seolah ingin mengingatkan kita bahwa: kamu bisa bersinar, justru di saat yang paling tidak terduga.
+    </p>
+    <div class="f-quote">
+      "Bintang yang paling terang seringkali baru terlihat ketika langit sedang gelap."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f2')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-f4')">Bintang Putih! Ayo rev masih ada! →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f4">
+  <div class="flower-img-side">
+    <img src="img/lavender.jpg" alt="Lavender">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">L</span>
+    <div class="f-progress" id="prog-4"></div>
+    <p class="f-tag">Bunga kelima</p>
+    <h2 class="f-name">Lavender</h2>
+    <p class="f-latin">Lavandula angustifolia</p>
+    <p class="f-desc">
+      Lavender adalah bunga yang diliat itu bikin tenang. Warna ungu-birunya yang lembut dan aromanya yang khas itu tu digunakan selama berabad-abad buat mengusir kegelisahan dan ngehadirin ketenangan. Ia seperti pelukan yang diam-diam meyakinkan kamu bahwa segalanya akan baik-baik saja.
+    </p>
+    <div class="f-quote">
+      "Ada orang-orang yang kehadirannya saja sudah cukup untuk membuat hati tenang — Ya, seperti lavender."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f3')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-f5')">Aku pengen banget ke taman bunga Lavender tau, Lanjut Rev! →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f5">
+  <div class="flower-img-side">
+    <img src="img/iris.jpg" alt="Iris">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">I</span>
+    <div class="f-progress" id="prog-5"></div>
+    <p class="f-tag">Bunga keenam</p>
+    <h2 class="f-name">Iris</h2>
+    <p class="f-latin">Iris germanica</p>
+    <p class="f-desc">
+      Iris adalah bunga dengan struktur yang paling anggun Rev — kelopaknya melengkung kaya orang yang lagi nari dan berputar. Dalam mitologi Yunani, Iris adalah dewi pelangi, pembawa pesan antara langit dan bumi. Bunga ini tu melambangkan harapan, kebijaksanaan, dan kepercayaan pada hal-hal yang belum terlihat.
+    </p>
+    <div class="f-quote">
+      "Percayakan langkahmu pada jalanan yang belum terlihat — di situlah keindahan paling nyata menunggu."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f4')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-f6')">Indah indah ya, 1 Lagi 1 Lagi →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen flower-screen" id="s-f6">
+  <div class="flower-img-side">
+    <img src="img/narcissus.jpg" alt="Narcissus">
+    <div class="flower-img-overlay"></div>
+  </div>
+  <div class="flower-text-side">
+    <span class="f-letter" aria-hidden="true">N</span>
+    <div class="f-progress" id="prog-6"></div>
+    <p class="f-tag">Bunga terakhir — dan terspesial</p>
+    <h2 class="f-name">Narcissus</h2>
+    <p class="f-latin">Narcissus × medioluteus</p>
+    <p class="f-desc">
+      Narcissus — bunga putih dengan mahkota kuning di tengahnya — adalah tanda awal musim semi. Ia yang pertama berani mekar setelah musim dingin yang panjang, seolah berkata kepada dunia: <em>"Aku di sini. Aku siap."</em> Ia melambangkan pembaruan, awal yang baru, dan keberanian untuk menjadi diri sendiri.
+    </p>
+    <div class="f-quote">
+      "Seperti Narcissus — kamu adalah tanda bahwa musim terbaik sedang dimulai."
+    </div>
+    <div class="f-nav">
+      <button class="btn-prev" onclick="goTo('s-f5')">←</button>
+      <button class="btn-next-f" onclick="goTo('s-letter-1')" style="border-color:rgba(201,107,138,.7);padding:14px 30px;">
+        ✦ ini bunga terakhir, sekarang Buka Pesannya Rev ✦
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-letter-1">
+  <div class="letter-inner">
+    <span class="l-tag">halooooooo Selamat Ulang Tahun</span>
+    <div class="num-big" aria-hidden="true">17</div>
+    <h2 class="l-heading">Selamat bertambah usia.</h2>
+    <p class="l-body">
+      Hari ini, ketukan waktu membawamu sampai di sebuah angka yang sering disebut orang sebagai angka yang manis — <em>tujuh belas.</em> Gerbang kecil yang menandai bahwa kamu kini sedang berjalan menuju kedewasaan yang lebih utuh.
+    </p>
+    <p class="l-body">
+      Selamat menyambut usia barumu. ga ada perayaan yang lebih megah selain rasa syukur karena dunia masih mengizinkanku menyaksikan binar matamu hingga hari ini.
+    </p>
+    <div class="letter-nav">
+      <button class="btn-back-letter" onclick="goTo('s-f6')">←</button>
+      <button class="btn-letter light" onclick="goTo('s-letter-2')">Lanjutkan →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-letter-2">
+  <div class="letter-inner">
+    <span class="l-tag">Doa & Semangat untukmu</span>
+    <h2 class="l-heading" style="font-style:italic;">Selamat berproses,<br>Jiwa yang Hebat.</h2>
+    <p class="l-body">
+      Menjadi dewasa mungkin akan membawa banyak tanya, jalanan yang sesekali berliku, atau langit yang kadang mendung. Namun terus inget Rev, kamu punya sepasang sayap yang kuat untuk terbang, dan hati yang cukup lapang buat menerima.
+    </p>
+    <div class="l-quote-box">
+      <p>Raih apa yang kamu mau. Kejar apa saja yang membuat hatimu hidup. Jangan takut jatuh, karena dunia ini terlalu luas untuk dilewati tanpa keberanian.</p>
+    </div>
+    <p class="l-body">
+      Di setiap langkahmu ke depan, ada doa-doaku yang memelukmu tanpa suara.
+    </p>
+    <div class="letter-nav">
+      <button class="btn-back-letter" onclick="goTo('s-letter-1')">←</button>
+      <button class="btn-letter light" onclick="goTo('s-letter-3')">Lanjutkan →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-letter-3">
+  <div class="letter-inner">
+    <span class="l-tag dark">Titik Koordinat</span>
+    <p class="l-body dark" style="max-width:480px;">
+      Di antara miliaran manusia yang sibuk mencari arah, aku sudah menentukan koordinatku sendiri. Maka ketahuilah satu hal:
+    </p>
+    <div class="pulang">
+      Titik pulangku<br>akan berhenti<br>di depanmu.
+    </div>
+    <p class="l-body dark" style="max-width:480px;">
+      Sejauh apa pun dunia membawamu melangkah, atau seletih apa pun perjalanan yang kita tempuh masing-masing, arah kepulanganku tidak akan pernah berubah.
+    </p>
+    <p class="l-body dark" style="font-style:italic;color:rgba(245,198,212,.85);">
+      Kamulah rumah yang selalu ingin kutuju di akhir hari.
+    </p>
+    <p class="l-body dark" style="max-width:480px;">
+      Sampai jumpa di pertemuan yang kita tunggu. Pertemuan yang akan melipat jarak, menyembuhkan rindu, dan merayakan semua proses yang berhasil kita lewati bersama.
+    </p>
+    <div class="letter-nav">
+      <button class="btn-back-letter" onclick="goTo('s-letter-2')">←</button>
+      <button class="btn-letter dark-btn" onclick="goTo('s-closing')">Penutup ✦</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="s-closing">
+  <div class="letter-inner" style="gap:20px;">
+    <div class="closing-num" aria-hidden="true">17</div>
+    <h2 class="l-heading dark" style="font-size:clamp(20px,4.5vw,36px);font-style:italic;">
+      Selamat ulang tahun ke-17,<br>Revalin Fadhillah Lesmana
+    </h2>
+    <p class="l-body dark" style="font-size:11px;letter-spacing:.4em;text-transform:uppercase;font-style:normal;color:rgba(201,107,138,.4);">
+      dengan sepenuh rasa, untukmu
+    </p>
+    <p style="font-size:22px;letter-spacing:12px;opacity:.3;">🌸🌸🌸</p>
+    <!-- Divider tipis -->
+    <div style="width:40px;height:1px;background:rgba(201,107,138,.2);border-radius:2px;"></div>
+    <!-- Nav row: panah kiri + tombol ulangi -->
+    <div class="letter-nav">
+      <button class="btn-back-letter" onclick="goTo('s-letter-3')" title="Kembali">←</button>
+      <button class="btn-letter dark-btn" onclick="goTo('s-f0')" style="font-size:10px;letter-spacing:.35em;opacity:.55;padding:12px 28px;">
+        ↺ &nbsp;Ulang dari awal Rev?
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+const screens = ['s-splash','s-f0','s-f1','s-f2','s-f3','s-f4','s-f5','s-f6','s-letter-1','s-letter-2','s-letter-3','s-closing'];
+const ov = document.getElementById('overlay');
+let current = 's-splash';
+
+// ── BACKSOUND ──
+const bgm = document.getElementById('bgm');
+const btnMute = document.getElementById('btn-mute');
+let musicStarted = false;
+
+// Mulai musik saat user pertama kali berinteraksi (klik apapun)
+document.addEventListener('click', () => {
+  if (!musicStarted) {
+    bgm.volume = 0.5;
+    bgm.play().catch(() => {}); // .catch() agar tidak error di browser ketat
+    musicStarted = true;
+  }
+}, { once: false });
+
+// Tombol mute/unmute
+btnMute.addEventListener('click', (e) => {
+  e.stopPropagation();
+  bgm.muted = !bgm.muted;
+  btnMute.textContent = bgm.muted ? '🔇' : '🔊';
+});
+
+function goTo(id) {
+  ov.classList.add('on');
+  setTimeout(() => {
+    document.getElementById(current).classList.remove('active');
+    document.getElementById(id).classList.add('active');
+    current = id;
+    updateProgress(id);
+    // Reset scroll internal halaman agar selalu mulai dari atas saat ganti slide
+    const inner = document.getElementById(id).querySelector('.letter-inner') || document.getElementById(id).querySelector('.flower-text-side');
+    if(inner) inner.scrollTop = 0;
+    ov.classList.remove('on');
+  }, 450);
+}
+
+function updateProgress(id) {
+  for (let i = 0; i < 7; i++) {
+    const el = document.getElementById('prog-' + i);
+    if (!el) continue;
+    el.innerHTML = '';
+    for (let j = 0; j < 7; j++) {
+      const d = document.createElement('div');
+      d.className = 'f-dot' + (j < i ? ' done' : j === i ? ' active' : '');
+      el.appendChild(d);
+    }
+  }
+}
+
+// init progress dots
+updateProgress('s-f0');
+
+// petals
+(function(){
+  const cols = ['#f5c6d4','#e8a0b4','#fad4e0','#c9a96e','#f0d4dc'];
+  for(let i=0;i<16;i++){
+    const p=document.createElement('div');
+    p.className='petal';
+    const s=6+Math.random()*10;
+    p.style.cssText=`left:${Math.random()*100}%;top:${-Math.random()*30}%;width:${s}px;height:${s}px;background:${cols[Math.floor(Math.random()*5)]};animation-duration:${9+Math.random()*13}s;animation-delay:${Math.random()*12}s;`;
+    document.body.appendChild(p);
+  }
+})();
+
+// keyboard nav
+document.addEventListener('keydown', e => {
+  const idx = screens.indexOf(current);
+  if ((e.key === 'ArrowRight' || e.key === ' ') && idx < screens.length-1) goTo(screens[idx+1]);
+  if (e.key === 'ArrowLeft' && idx > 0) goTo(screens[idx-1]);
+});
+
+// swipe mobile optimasi agar lebih smooth
+let tx=0;
+document.addEventListener('touchstart', e => tx = e.touches[0].clientX, {passive: true});
+document.addEventListener('touchend', e => {
+  const dx = tx - e.changedTouches[0].clientX;
+  const idx = screens.indexOf(current);
+  if (dx > 65 && idx < screens.length-1) goTo(screens[idx+1]);
+  if (dx < -65 && idx > 0) goTo(screens[idx-1]);
+}, {passive: true});
+</script>
+</body>
+</html>
